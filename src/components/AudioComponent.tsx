@@ -1,24 +1,22 @@
-import { LocalAudioTrack, RemoteAudioTrack } from "livekit-client";
-import { useEffect, useRef } from "react";
+import { LocalAudioTrack, RemoteAudioTrack } from 'livekit-client';
+import { FC, useEffect, useRef } from 'react';
 
-interface AudioComponentProps {
-    track: LocalAudioTrack | RemoteAudioTrack;
-}
+type AudioComponentProps = {
+  track: LocalAudioTrack | RemoteAudioTrack;
+};
 
-function AudioComponent({ track }: AudioComponentProps) {
-    const audioElement = useRef<HTMLAudioElement | null>(null);
+const AudioComponent: FC<AudioComponentProps> = ({ track }) => {
+  const audioElement = useRef<HTMLAudioElement | null>(null);
 
-    useEffect(() => {
-        if (audioElement.current) {
-            track.attach(audioElement.current);
-        }
+  useEffect(() => {
+    if (audioElement.current) track.attach(audioElement.current);
 
-        return () => {
-            track.detach();
-        };
-    }, [track]);
+    return () => {
+      track.detach();
+    };
+  }, [track]);
 
-    return <audio ref={audioElement} id={track.sid} />;
-}
+  return <audio ref={audioElement} id={track.sid} />;
+};
 
 export default AudioComponent;

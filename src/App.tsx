@@ -10,7 +10,7 @@ import AppLogo from '@/components/AppLogo/AppLogo.tsx';
 import { Page } from '@/constants/pages.ts';
 import { authService } from '@/lib/auth/AuthService.ts';
 import useRxState from '@/lib/storage/useRxState.ts';
-import Dashboard from '@/pages/Dashboard.tsx';
+import Dashboard from '@/pages/Dashboard/Dashboard.tsx';
 import Meeting from '@/pages/Meeting/Meeting.tsx';
 import SignIn from '@/pages/SignIn.tsx';
 import SignUp from '@/pages/SignUp.tsx';

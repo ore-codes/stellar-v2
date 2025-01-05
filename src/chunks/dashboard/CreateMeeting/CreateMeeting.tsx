@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Button from '@/components/Button/Button.tsx';
 import FormError from '@/components/FormError/FormError.tsx';
 import Textbox from '@/components/Textbox/Textbox.tsx';
+import { copyToClipboard } from '@/lib/utils.ts';
 
 import { createMeetingFields } from './CreateMeeting.config.ts';
 import useCreateMeeting from './useCreateMeeting.ts';
@@ -13,14 +14,16 @@ const CreateMeeting: FC = () => {
   const h = useCreateMeeting();
 
   if (h.createdMeeting) {
+    const formattedCode = h.createdMeeting.code.match(/.{1,3}/g).join('-');
     return (
       <div className="flex flex-col gap-8">
         <h1 className="text-2xl font-semibold text-dark">Meeting created</h1>
         <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center justify-center rounded-md bg-light text-xl font-bold text-primary">
-            {h.createdMeeting.code.match(/.{1,3}/g).join('-')}
-          </div>
-          <Button variant="subtle" onClick={h.handleCopyLink}>
+          <Button variant="subtle" onClick={() => copyToClipboard(formattedCode)}>
+            {formattedCode}
+            <Icon icon="solar:copy-bold" className="ml-2 size-6" />
+          </Button>
+          <Button onClick={() => copyToClipboard(h.meetingLink)}>
             <Icon icon="solar:copy-bold" className="size-6" /> Copy link
           </Button>
         </div>

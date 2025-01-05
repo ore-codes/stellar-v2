@@ -1,5 +1,4 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -21,12 +20,5 @@ export default function useCreateMeeting() {
     });
   });
 
-  const handleCopyLink = () => {
-    navigator.clipboard
-      .writeText(meetingLink)
-      .then(() => enqueueSnackbar('Link copied to clipboard', { variant: 'success' }))
-      .catch(() => enqueueSnackbar('Link failed to copy', { variant: 'error' }));
-  };
-
-  return { form, handleSubmit, apiRequest, createdMeeting, handleCopyLink, meetingLink };
+  return { form, handleSubmit, apiRequest, createdMeeting, meetingLink };
 }

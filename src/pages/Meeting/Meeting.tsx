@@ -75,7 +75,7 @@ function Meeting() {
       { trackPublication: publication, participantIdentity: participant.identity },
     ]);
     if (meeting) {
-      apiRequest.makeRequest(apiClient.get(`meetings/${meeting.id}`)).subscribe((res) => {
+      apiRequest.makeRequest(apiClient.get(`meetings/${code}`)).subscribe((res) => {
         if (res) {
           setMeeting(res.meeting);
         }
