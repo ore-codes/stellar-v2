@@ -20,6 +20,7 @@
     "classnames": "^2.5.1",
     "dayjs": "^1.11.12",
     "idb-keyval": "^6.2.1",
+    "livekit-client": "^2.7.5",
     "motion": "^11.15.0",
     "notistack": "^3.0.1",
     "react": "^18.3.1",

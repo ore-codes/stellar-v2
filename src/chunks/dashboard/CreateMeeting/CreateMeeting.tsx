@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { FC } from 'react';
+import { Link } from 'react-router-dom';
 
 import Button from '@/components/Button/Button.tsx';
 import FormError from '@/components/FormError/FormError.tsx';
@@ -14,16 +15,18 @@ const CreateMeeting: FC = () => {
   if (h.createdMeeting) {
     return (
       <div className="flex flex-col gap-8">
-        <h1 className="text-lg font-semibold">Meeting created</h1>
+        <h1 className="text-2xl font-semibold text-dark">Meeting created</h1>
         <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center justify-center rounded-xl bg-light text-xl font-bold text-placeholder">
+          <div className="flex items-center justify-center rounded-md bg-light text-xl font-bold text-primary">
             {h.createdMeeting.code.match(/.{1,3}/g).join('-')}
           </div>
           <Button variant="subtle" onClick={h.handleCopyLink}>
-            <Icon icon="solar:copy-bold" className="mr-2 size-6" /> Copy link
+            <Icon icon="solar:copy-bold" className="size-6" /> Copy link
           </Button>
         </div>
-        <Button>Join the meeting</Button>
+        <Button asChild>
+          <Link to={h.meetingLink}>Join the meeting</Link>
+        </Button>
       </div>
     );
   }

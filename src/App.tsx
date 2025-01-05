@@ -11,6 +11,7 @@ import { Page } from '@/constants/pages.ts';
 import { authService } from '@/lib/auth/AuthService.ts';
 import useRxState from '@/lib/storage/useRxState.ts';
 import Dashboard from '@/pages/Dashboard.tsx';
+import Meeting from '@/pages/Meeting/Meeting.tsx';
 import SignIn from '@/pages/SignIn.tsx';
 import SignUp from '@/pages/SignUp.tsx';
 
@@ -41,6 +42,7 @@ const App: FC = () => {
             <Route index element={<OnboardingRoute element={<SignIn />} />} />
             <Route path={Page.SignUp} element={<SignUp />} />
             <Route path={Page.Dashboard} element={<ProtectedRoute element={<Dashboard />} />} />
+            <Route path="/meeting/:code" element={<ProtectedRoute element={<Meeting />} />} />
           </Routes>
         </Router>
       </SnackbarProvider>

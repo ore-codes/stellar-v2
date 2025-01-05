@@ -18,6 +18,9 @@ module.exports = {
         lightGrey: '#FBFBFB',
         warning: '#E8871E',
       },
+      aspectRatio: {
+        'video-portrait': [9, 16],
+      },
     },
   },
 };

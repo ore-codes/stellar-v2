@@ -28,12 +28,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
-        {currentIcon && (
-          <span className="icon-container mr-2" style={iconStyle}>
-            {currentIcon}
-          </span>
-        )}
-        {children}
+        <div className="flex items-center gap-2">
+          {currentIcon && (
+            <span className="icon-container mr-2" style={iconStyle}>
+              {currentIcon}
+            </span>
+          )}
+          {children}
+        </div>
       </Comp>
     );
   }

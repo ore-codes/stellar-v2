@@ -79,7 +79,7 @@ const Dashboard: FC = () => {
           </motion.div>
           <motion.div variants={itemVariants}>
             <Button variant="subtle" size="sm" className="self-start" onClick={handleLogout}>
-              <Icon icon="solar:logout-2-outline" className="mr-2 size-5" />
+              <Icon icon="solar:logout-2-outline" className="size-5" />
               Sign out
             </Button>
           </motion.div>

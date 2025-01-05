@@ -13,6 +13,7 @@ export default function useCreateMeeting() {
   const form = useForm({ resolver: yupResolver(createMeetingSchema) });
   const apiRequest = useApiRequest<CreateMeetingRes>();
   const [createdMeeting, setCreatedMeeting] = useState<CreateMeetingRes>();
+  const meetingLink = window.location.origin + '/meeting/' + createdMeeting?.code;
 
   const handleSubmit = form.handleSubmit((data) => {
     apiRequest.makeRequest(apiClient.post('meetings', data)).subscribe(async (res) => {
@@ -22,10 +23,10 @@ export default function useCreateMeeting() {
 
   const handleCopyLink = () => {
     navigator.clipboard
-      .writeText(window.location.origin + '/meeting/' + createdMeeting.code)
+      .writeText(meetingLink)
       .then(() => enqueueSnackbar('Link copied to clipboard', { variant: 'success' }))
       .catch(() => enqueueSnackbar('Link failed to copy', { variant: 'error' }));
   };
 
-  return { form, handleSubmit, apiRequest, createdMeeting, handleCopyLink };
+  return { form, handleSubmit, apiRequest, createdMeeting, handleCopyLink, meetingLink };
 }
