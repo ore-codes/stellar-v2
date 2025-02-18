@@ -40,3 +40,7 @@ body [data-lk-theme="default"] {
     --lk-connection-good: #f9b11f;
     --lk-connection-poor: #f91f31;
 }
+
+.lk-participant-name {
+    color: #fff !important;
+}

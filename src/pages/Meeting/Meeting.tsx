@@ -60,7 +60,7 @@ function Meeting() {
         </div>
         <div className="flex items-center gap-2 rounded-xl bg-light/40 px-2 py-4">
           <img
-            src={`https://ui-avatars.com/api/?name=${encodeURI(user?.username)}&background=4CAF50&color=fff&size=128`}
+            src={`https://ui-avatars.com/api/?name=${encodeURI(user?.username)}&background=292D32&color=fff&size=128`}
             alt="Profile image"
             className="size-10 rounded-full"
           />
