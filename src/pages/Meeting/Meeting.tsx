@@ -16,11 +16,10 @@ import { Page } from '@/constants/pages.ts';
 import { apiClient } from '@/lib/api/axios.ts';
 import { useApiRequest } from '@/lib/api/useApiRequest.ts';
 import { authService } from '@/lib/auth/AuthService.ts';
+import { Env } from '@/lib/config.ts';
 import useRxState from '@/lib/storage/useRxState.ts';
 
 import { JoinMeetingRes, TrackInfo } from './Meeting.types.ts';
-
-const LIVEKIT_URL = 'ws://localhost:7880/';
 
 function Meeting() {
   const { code } = useParams<{ code: string }>();
@@ -51,7 +50,7 @@ function Meeting() {
         setMeeting(res.meeting);
 
         try {
-          await room.connect(LIVEKIT_URL, res.token);
+          await room.connect(Env.LiveKitUrl, res.token);
           await room.localParticipant.enableCameraAndMicrophone();
           setLocalTrack(
             room.localParticipant.videoTrackPublications.values().next().value.videoTrack

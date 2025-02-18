@@ -3,14 +3,16 @@ import { enqueueSnackbar } from 'notistack';
 import { firstValueFrom } from 'rxjs';
 
 import { authService } from '@/lib/auth/AuthService.ts';
+import { Env } from '@/lib/config.ts';
 
 import { ErrorResponse } from './api.types.ts';
 
-export const baseURL = import.meta.env.VITE_SERVER_URL ?? 'http://localhost:3000';
-
 export const apiClient = axios.create({
-  baseURL,
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: Env.ServerUrl,
+  headers: {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': true,
+  },
   timeout: 30000,
 });
 
