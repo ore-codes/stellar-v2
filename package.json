@@ -14,6 +14,9 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.18",
     "@hookform/resolvers": "^3.9.0",
+    "@livekit/components-react": "^2.8.1",
+    "@livekit/components-styles": "^1.1.4",
+    "@livekit/krisp-noise-filter": "^0.2.16",
     "@radix-ui/react-slot": "^1.1.0",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.0",

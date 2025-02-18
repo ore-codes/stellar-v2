@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Button from '@/components/Button/Button.tsx';
 import FormError from '@/components/FormError/FormError.tsx';
 import Textbox from '@/components/Textbox/Textbox.tsx';
-import { copyToClipboard } from '@/lib/utils.ts';
+import { copyToClipboard, formatMeetingCode } from '@/lib/utils.ts';
 
 import { createMeetingFields } from './CreateMeeting.config.ts';
 import useCreateMeeting from './useCreateMeeting.ts';
@@ -14,7 +14,7 @@ const CreateMeeting: FC = () => {
   const h = useCreateMeeting();
 
   if (h.createdMeeting) {
-    const formattedCode = h.createdMeeting.code.match(/.{1,3}/g).join('-');
+    const formattedCode = formatMeetingCode(h.createdMeeting.code);
     return (
       <div className="flex flex-col gap-8">
         <h1 className="text-2xl font-semibold text-dark">Meeting created</h1>

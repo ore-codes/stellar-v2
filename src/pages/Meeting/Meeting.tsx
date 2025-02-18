@@ -1,141 +1,108 @@
+import '@livekit/components-styles';
+
 import {
-  LocalVideoTrack,
-  RemoteParticipant,
-  RemoteTrack,
-  RemoteTrackPublication,
-  Room,
-  RoomEvent,
-} from 'livekit-client';
-import { useCallback, useEffect, useState } from 'react';
+  ControlBar,
+  GridLayout,
+  LiveKitRoom,
+  ParticipantTile,
+  RoomAudioRenderer,
+  useTracks,
+} from '@livekit/components-react';
+import { Room, Track } from 'livekit-client';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import AudioComponent from '@/components/AudioComponent';
-import Button from '@/components/Button/Button.tsx';
-import VideoComponent from '@/components/VideoComponent';
+import AppLogo from '@/components/AppLogo/AppLogo.tsx';
 import { Page } from '@/constants/pages.ts';
 import { apiClient } from '@/lib/api/axios.ts';
 import { useApiRequest } from '@/lib/api/useApiRequest.ts';
 import { authService } from '@/lib/auth/AuthService.ts';
 import { Env } from '@/lib/config.ts';
 import useRxState from '@/lib/storage/useRxState.ts';
+import { formatMeetingCode } from '@/lib/utils.ts';
 
-import { JoinMeetingRes, TrackInfo } from './Meeting.types.ts';
+import { JoinMeetingRes } from './Meeting.types.ts';
 
 function Meeting() {
   const { code } = useParams<{ code: string }>();
   const [meeting, setMeeting] = useState<JoinMeetingRes['meeting']>();
+  const [token, setToken] = useState<string>();
   const user = useRxState(authService.userStorage.data$);
-  const [room, setRoom] = useState<Room>();
-  const [localTrack, setLocalTrack] = useState<LocalVideoTrack>();
-  const [remoteTracks, setRemoteTracks] = useState<TrackInfo[]>([]);
+  const room = useMemo(() => new Room(), []);
   const apiRequest = useApiRequest<JoinMeetingRes>();
   const navigate = useNavigate();
 
-  const usernameFromId = useCallback(
-    (userId: string) => {
-      return meeting.participants.find((p) => p.userId === userId)?.user.username;
-    },
-    [meeting]
-  );
-
-  useEffect(() => {
+  const mounted = () => {
     apiRequest.makeRequest(apiClient.put('meetings/join', { code })).subscribe(async (res) => {
       if (res) {
-        const room = new Room()
-          .on(RoomEvent.TrackSubscribed, handleTrackSubscribe)
-          .on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribe)
-          .on(RoomEvent.Disconnected, leaveRoom);
-
-        setRoom(room);
+        setToken(res.token);
         setMeeting(res.meeting);
-
-        try {
-          await room.connect(Env.LiveKitUrl, res.token);
-          await room.localParticipant.enableCameraAndMicrophone();
-          setLocalTrack(
-            room.localParticipant.videoTrackPublications.values().next().value.videoTrack
-          );
-        } catch (error) {
-          console.log('There was an error connecting to the room:', (error as Error).message);
-          console.error(error);
-          await leaveRoom();
-        }
       }
     });
-  }, []);
-
-  const handleTrackSubscribe = (
-    _track: RemoteTrack,
-    publication: RemoteTrackPublication,
-    participant: RemoteParticipant
-  ) => {
-    setRemoteTracks((prev) => [
-      ...prev,
-      { trackPublication: publication, participantIdentity: participant.identity },
-    ]);
-    if (meeting) {
-      apiRequest.makeRequest(apiClient.get(`meetings/${code}`)).subscribe((res) => {
-        if (res) {
-          setMeeting(res.meeting);
-        }
-      });
-    }
   };
-
-  const handleTrackUnsubscribe = (_track: RemoteTrack, publication: RemoteTrackPublication) => {
-    setRemoteTracks((prev) =>
-      prev.filter((track) => track.trackPublication.trackSid !== publication.trackSid)
-    );
-  };
+  useEffect(mounted, []);
 
   const leaveRoom = async () => {
-    await room?.disconnect();
-    setRoom(undefined);
-    setLocalTrack(undefined);
-    setRemoteTracks([]);
     navigate(Page.Dashboard);
     apiRequest.makeRequest(apiClient.put('meetings/leave', { code }));
   };
 
+  if (!meeting) return;
+
   return (
-    <>
-      {!room ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="flex flex-col items-center justify-center">
-          <div className="flex w-full max-w-7xl items-center justify-between py-5">
-            <h2 className="text-2xl font-bold">{meeting.title}</h2>
-            <Button variant="ghost" className="text-danger" onClick={leaveRoom}>
-              Leave Room
-            </Button>
-          </div>
-          <div className="grid h-full w-full max-w-7xl grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center justify-center gap-2 md:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] lg:grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
-            {localTrack && (
-              <VideoComponent
-                track={localTrack}
-                participantIdentity={usernameFromId(user.id)}
-                local={true}
-              />
-            )}
-            {remoteTracks.map((remoteTrack) =>
-              remoteTrack.trackPublication.kind === 'video' ? (
-                <VideoComponent
-                  key={remoteTrack.trackPublication.trackSid}
-                  track={remoteTrack.trackPublication.videoTrack!}
-                  participantIdentity={usernameFromId(remoteTrack.participantIdentity)}
-                />
-              ) : (
-                <AudioComponent
-                  key={remoteTrack.trackPublication.trackSid}
-                  track={remoteTrack.trackPublication.audioTrack!}
-                />
-              )
-            )}
+    <div className="flex">
+      <div className="hidden basis-[30rem] space-y-4 bg-primary px-4 py-8 text-text lg:block">
+        <AppLogo className="!text-2xl !text-text" />
+        <div className="flex flex-col gap-2 rounded-xl bg-light/40 px-2 py-4">
+          <h1 className="text-2xl font-bold">{meeting.title}</h1>
+          <h2 className="font-semibold">{formatMeetingCode(meeting.code)}</h2>
+          <p>{meeting.description}</p>
+        </div>
+        <div className="flex items-center gap-2 rounded-xl bg-light/40 px-2 py-4">
+          <img
+            src={`https://ui-avatars.com/api/?name=${encodeURI(user?.username)}&background=4CAF50&color=fff&size=128`}
+            alt="Profile image"
+            className="size-10 rounded-full"
+          />
+          <div>
+            <div className="font-bold">{user?.username}</div>
+            <div className="text-sm text-dark">{user?.email}</div>
           </div>
         </div>
-      )}
-    </>
+      </div>
+      <LiveKitRoom
+        connect={Boolean(token && room)}
+        room={room}
+        video={true}
+        audio={true}
+        token={token}
+        serverUrl={Env.LiveKitUrl}
+        data-lk-theme="default"
+        style={{ height: '100vh' }}
+        onDisconnected={leaveRoom}
+        onError={leaveRoom}
+      >
+        <MyVideoConference />
+        <RoomAudioRenderer />
+        <ControlBar />
+      </LiveKitRoom>
+    </div>
   );
 }
 
 export default Meeting;
+
+function MyVideoConference() {
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: false }
+  );
+  return (
+    <GridLayout tracks={tracks} style={{ height: 'calc(100vh - var(--lk-control-bar-height))' }}>
+      <ParticipantTile />
+    </GridLayout>
+  );
+}
